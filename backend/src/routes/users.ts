@@ -3,6 +3,7 @@ import User from "../models/user";
 import jwt from "jsonwebtoken";
 import { check, validationResult } from "express-validator";
 import verifyToken from "../middleware/auth";
+import { Role } from "../enum";
 
 const router = express.Router();
 
@@ -45,12 +46,14 @@ router.post(
       if (user) {
         return res.status(400).json({ message: "User already exists" });
       }
+      console.log(req.body);
+      
 
-      user = new User(req.body);
+      user = new User({...req.body, role: Role.USER});
       await user.save();
 
       const token = jwt.sign(
-        { userId: user.id },
+        { userId: user.id, role: user.role },
         process.env.JWT_SECRET_KEY as string,
         {
           expiresIn: "1d",

@@ -47,7 +47,7 @@ router.post(
         secure: process.env.NODE_ENV === "production",
         maxAge: 86400000,
       });
-      res.status(200).json({ userId: user._id });
+      res.status(200).json({ userId: user._id, token });
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Something went wrong" });
@@ -64,6 +64,14 @@ router.post("/logout", (req: Request, res: Response) => {
     expires: new Date(0),
   });
   res.send();
+});
+
+router.get("/me", verifyToken, async (req: Request, res: Response) => {
+  const user = await User.findById(req.userId);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  res.status(200).json(user);
 });
 
 export default router;

@@ -5,6 +5,7 @@ import Hotel from "../models/hotel";
 import verifyToken from "../middleware/auth";
 import { body } from "express-validator";
 import { HotelType } from "../shared/types";
+import verifyRole from "../middleware/role";
 
 const router = express.Router();
 
@@ -18,7 +19,7 @@ const upload = multer({
 
 router.post(
   "/",
-  verifyToken,
+  verifyRole,
   [
     body("name").notEmpty().withMessage("Name is required"),
     body("city").notEmpty().withMessage("City is required"),

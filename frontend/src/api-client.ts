@@ -50,12 +50,17 @@ export const signIn = async (formData: SignInFormData) => {
   if (!response.ok) {
     throw new Error(body.message);
   }
+  localStorage.setItem("token", body.token);
   return body;
 };
 
 export const validateToken = async () => {
   const response = await fetch(`${API_BASE_URL}/api/auth/validate-token`, {
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
   });
 
   if (!response.ok) {
@@ -81,6 +86,9 @@ export const addMyHotel = async (hotelFormData: FormData) => {
     method: "POST",
     credentials: "include",
     body: hotelFormData,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
   });
 
   if (!response.ok) {
@@ -93,6 +101,10 @@ export const addMyHotel = async (hotelFormData: FormData) => {
 export const fetchMyHotels = async (): Promise<HotelType[]> => {
   const response = await fetch(`${API_BASE_URL}/api/my-hotels`, {
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
   });
 
   if (!response.ok) {
@@ -100,6 +112,22 @@ export const fetchMyHotels = async (): Promise<HotelType[]> => {
   }
 
   return response.json();
+};
+
+export const getMe = async (): Promise<UserType> => {
+  const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Error fetching hotels");
+  }
+  const user = await response.json();
+  return user;
 };
 
 export const fetchMyHotelById = async (hotelId: string): Promise<HotelType> => {
