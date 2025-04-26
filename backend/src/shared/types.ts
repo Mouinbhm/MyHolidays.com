@@ -22,12 +22,12 @@ export type HotelType = {
   starRating: number;
   imageUrls: string[];
   lastUpdated: Date;
-  bookings: BookingType[];
 };
 
 export type BookingType = {
   _id: string;
   userId: string;
+  hotelId: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -36,6 +36,10 @@ export type BookingType = {
   checkIn: Date;
   checkOut: Date;
   totalCost: number;
+  hotelName: string;
+  hotelCity: string;
+  hotelCountry: string;
+  createdAt: Date;
 };
 
 export type HotelSearchResponse = {

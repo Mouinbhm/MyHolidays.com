@@ -1,33 +1,37 @@
 import express, { Request, Response } from "express";
 import verifyToken from "../middleware/auth";
-import Hotel from "../models/hotel";
-import { HotelType } from "../shared/types";
+import Booking from "../models/booking";
+import User from "../models/user";
 
 const router = express.Router();
 
-// /api/my-bookings
+// Route pour récupérer les réservations d'un utilisateur
 router.get("/", verifyToken, async (req: Request, res: Response) => {
   try {
-    const hotels = await Hotel.find({
-      bookings: { $elemMatch: { userId: req.userId } },
-    });
+    const bookings = await Booking.find({ userId: req.userId }).sort({
+      createdAt: -1,
+    }); // Trier par date de création décroissante
 
-    const results = hotels.map((hotel) => {
-      const userBookings = hotel.bookings.filter(
-        (booking) => booking.userId === req.userId
-      );
-
-      const hotelWithUserBookings: HotelType = {
-        ...hotel.toObject(),
-        bookings: userBookings,
-      };
-
-      return hotelWithUserBookings;
-    });
-
-    res.status(200).send(results);
+    res.status(200).json(bookings);
   } catch (error) {
     console.log(error);
+    res.status(500).json({ message: "Unable to fetch bookings" });
+  }
+});
+
+// Route pour l'admin - toutes les réservations
+router.get("/all", verifyToken, async (req: Request, res: Response) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user || user.role !== "ADMIN") {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    const bookings = await Booking.find().sort({ createdAt: -1 }).lean();
+
+    res.status(200).json(bookings);
+  } catch (error) {
+    console.error("Fetch bookings error:", error);
     res.status(500).json({ message: "Unable to fetch bookings" });
   }
 });

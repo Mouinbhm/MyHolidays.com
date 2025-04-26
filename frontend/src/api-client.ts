@@ -5,6 +5,7 @@ import {
   HotelType,
   PaymentIntentResponse,
   UserType,
+  BookingType,
 } from "../../backend/src/shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
@@ -266,6 +267,21 @@ export const createRoomBooking = async (formData: BookingFormData) => {
 export const fetchMyBookings = async (): Promise<HotelType[]> => {
   const response = await fetch(`${API_BASE_URL}/api/my-bookings`, {
     credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Unable to fetch bookings");
+  }
+
+  return response.json();
+};
+
+export const fetchAllBookings = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/my-bookings/all`, {
+    credentials: "include",
+    headers: {
+      "Cache-Control": "no-cache",
+    },
   });
 
   if (!response.ok) {

@@ -4,6 +4,7 @@ import { BookingType, HotelSearchResponse } from "../shared/types";
 import { param, validationResult } from "express-validator";
 import Stripe from "stripe";
 import verifyToken from "../middleware/auth";
+import Booking from "../models/booking";
 
 const stripe = new Stripe(process.env.STRIPE_API_KEY as string);
 
@@ -151,24 +152,23 @@ router.post(
         });
       }
 
-      const newBooking: BookingType = {
-        ...req.body,
-        userId: req.userId,
-      };
-
-      const hotel = await Hotel.findOneAndUpdate(
-        { _id: req.params.hotelId },
-        {
-          $push: { bookings: newBooking },
-        }
-      );
-
+      const hotel = await Hotel.findById(req.params.hotelId);
       if (!hotel) {
         return res.status(400).json({ message: "hotel not found" });
       }
 
-      await hotel.save();
-      res.status(200).send();
+      const newBooking = new Booking({
+        ...req.body,
+        userId: req.userId,
+        hotelId: hotel._id,
+        hotelName: hotel.name,
+        hotelCity: hotel.city,
+        hotelCountry: hotel.country
+      });
+
+      await newBooking.save();
+
+      res.status(200).json(newBooking);
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "something went wrong" });

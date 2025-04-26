@@ -17,9 +17,14 @@ import Booking from "./pages/Booking";
 import MyBookings from "./pages/MyBookings";
 import Home from "./pages/Home";
 import Invoice from "./pages/Invoice";
+import AdminBookings from "./pages/AdminBookings";
+import { useQuery } from "react-query";
+import * as apiClient from "./api-client";
 
 const App = () => {
   const { isLoggedIn } = useAppContext();
+  const { data: user } = useQuery("getMe", apiClient.getMe);
+
   return (
     <Router>
       <Routes>
@@ -110,6 +115,18 @@ const App = () => {
             />
           </>
         )}
+
+        {isLoggedIn && user?.role === "ADMIN" && (
+          <Route
+            path="/admin/bookings"
+            element={
+              <Layout>
+                <AdminBookings />
+              </Layout>
+            }
+          />
+        )}
+
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
