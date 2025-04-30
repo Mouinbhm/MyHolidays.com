@@ -261,6 +261,8 @@ export const createRoomBooking = async (formData: BookingFormData) => {
   if (!response.ok) {
     throw new Error("Error booking room");
   }
+
+  return response.json();
 };
 
 export const fetchMyBookings = async (): Promise<HotelType[]> => {
@@ -270,6 +272,30 @@ export const fetchMyBookings = async (): Promise<HotelType[]> => {
 
   if (!response.ok) {
     throw new Error("Unable to fetch bookings");
+  }
+
+  return response.json();
+};
+
+export const fetchAllBookings = async (): Promise<HotelType[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/all-bookings`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Unable to fetch all bookings");
+  }
+
+  return response.json();
+};
+
+export const fetchBookingById = async (bookingId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/bookings/${bookingId}`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Unable to fetch booking");
   }
 
   return response.json();

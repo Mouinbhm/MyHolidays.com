@@ -28,6 +28,7 @@ export type HotelType = {
 export type BookingType = {
   _id: string;
   userId: string;
+  hotelId: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -36,6 +37,8 @@ export type BookingType = {
   checkIn: Date;
   checkOut: Date;
   totalCost: number;
+  paymentIntentId: string;
+  createdAt: Date;
 };
 
 export type HotelSearchResponse = {

@@ -1,36 +1,39 @@
 import express, { Request, Response } from "express";
 import verifyToken from "../middleware/auth";
 import Hotel from "../models/hotel";
+import User from "../models/user";
 import Booking from "../models/booking";
-import { HotelType } from "../shared/types";
 
 const router = express.Router();
 
-// /api/my-bookings
+// /api/all-bookings
 router.get("/", verifyToken, async (req: Request, res: Response) => {
   try {
-    const bookings = await Booking.find({ userId: req.userId });
-    const hotelIds = [...new Set(bookings.map((booking) => booking.hotelId))];
+    const user = await User.findById(req.userId);
 
+    if (!user || user.role !== "ADMIN") {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    const bookings = await Booking.find();
+    const hotelIds = [...new Set(bookings.map((booking) => booking.hotelId))];
     const hotels = await Hotel.find({ _id: { $in: hotelIds } });
 
     const results = hotels.map((hotel) => {
-      const userBookings = bookings.filter(
+      const hotelBookings = bookings.filter(
         (booking) => booking.hotelId === hotel._id.toString()
       );
 
-      const hotelWithUserBookings: HotelType = {
+      return {
         ...hotel.toObject(),
-        bookings: userBookings,
+        bookings: hotelBookings,
       };
-
-      return hotelWithUserBookings;
     });
 
     res.status(200).send(results);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Unable to fetch bookings" });
+    res.status(500).json({ message: "Unable to fetch all bookings" });
   }
 });
 

@@ -40,7 +40,6 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
 
   const navigate = useNavigate();
 
-
   const { mutate: bookRoom, isLoading } = useMutation(
     apiClient.createRoomBooking,
     {
@@ -80,10 +79,12 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
     });
 
     if (result.paymentIntent?.status === "succeeded") {
-      bookRoom({ ...formData, paymentIntentId: result.paymentIntent.id });
+      const response = await bookRoom({
+        ...formData,
+        paymentIntentId: result.paymentIntent.id,
+      });
+      navigate(`/pdf/${response.bookingId}`);
     }
-
-    navigate(`/pdf/${formData.hotelId}`);
   };
 
   return (

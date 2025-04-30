@@ -6,13 +6,13 @@ import * as apiClient from "../api-client";
 
 const Invoice = () => {
   const pdfRef = useRef<HTMLDivElement>(null);
-  const { hotelId } = useParams();
+  const { bookingId } = useParams();
 
-  const { data: hotel } = useQuery(
-    "fetchHotelByID",
-    () => apiClient.fetchHotelById(hotelId as string),
+  const { data: bookingData } = useQuery(
+    "fetchBookingById",
+    () => apiClient.fetchBookingById(bookingId as string),
     {
-      enabled: !!hotelId,
+      enabled: !!bookingId,
     }
   );
 
@@ -22,7 +22,7 @@ const Invoice = () => {
   );
 
   useEffect(() => {
-    if (hotel && currentUser) {
+    if (bookingData && currentUser) {
       setTimeout(() => {
         const element = pdfRef.current;
         if (element) {
@@ -38,11 +38,13 @@ const Invoice = () => {
         }
       }, 300);
     }
-  }, [hotel, currentUser]);
+  }, [bookingData, currentUser]);
 
-  if (!hotel || !currentUser) {
+  if (!bookingData || !currentUser) {
     return <div>Loading...</div>;
   }
+
+  const { booking, hotel } = bookingData;
 
   return (
     <div className="min-h-screen bg-gray-50 p-8" ref={pdfRef}>
@@ -102,9 +104,7 @@ const Invoice = () => {
             <div className="bg-white p-4 rounded-md shadow-sm">
               <p className="font-semibold text-gray-700 mb-1">Check-in Date:</p>
               <p className="text-lg">
-                {new Date(
-                  hotel.bookings[hotel.bookings.length - 1].checkIn
-                ).toLocaleDateString()}
+                {new Date(booking.checkIn).toLocaleDateString()}
               </p>
             </div>
             <div className="bg-white p-4 rounded-md shadow-sm">
@@ -112,9 +112,7 @@ const Invoice = () => {
                 Check-out Date:
               </p>
               <p className="text-lg">
-                {new Date(
-                  hotel.bookings[hotel.bookings.length - 1].checkOut
-                ).toLocaleDateString()}
+                {new Date(booking.checkOut).toLocaleDateString()}
               </p>
             </div>
             <div className="bg-white p-4 rounded-md shadow-sm">
@@ -122,15 +120,13 @@ const Invoice = () => {
                 Number of Guests:
               </p>
               <p className="text-lg">
-                {hotel.bookings[hotel.bookings.length - 1].adultCount} adults,{" "}
-                {hotel.bookings[hotel.bookings.length - 1].childCount} children
+                {booking.adultCount} adults, {booking.childCount} children
               </p>
             </div>
             <div className="bg-white p-4 rounded-md shadow-sm">
               <p className="font-semibold text-gray-700 mb-1">Total Cost:</p>
               <p className="text-lg text-green-600 font-bold">
-                £
-                {hotel.bookings[hotel.bookings.length - 1].totalCost.toFixed(2)}
+                £{booking.totalCost.toFixed(2)}
               </p>
             </div>
           </div>

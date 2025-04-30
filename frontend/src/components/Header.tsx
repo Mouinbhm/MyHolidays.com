@@ -20,20 +20,30 @@ const Header = () => {
         <span className="flex space-x-2">
           {isLoggedIn ? (
             <>
-              <Link
-                className="flex items-center text-white px-3 font-bold hover:bg-blue-600"
-                to="/my-bookings"
-              >
-                My Bookings
-              </Link>
-              { user && user.role === "ADMIN" ? 
+              {user && user.role !== "ADMIN" && (
                 <Link
                   className="flex items-center text-white px-3 font-bold hover:bg-blue-600"
-                  to="/my-hotels"
+                  to="/my-bookings"
                 >
-                  My Hotels
+                  My Bookings
                 </Link>
-              : <></>}
+              )}
+              {user && user.role === "ADMIN" && (
+                <>
+                  <Link
+                    className="flex items-center text-white px-3 font-bold hover:bg-blue-600"
+                    to="/my-hotels"
+                  >
+                    My Hotels
+                  </Link>
+                  <Link
+                    className="flex items-center text-white px-3 font-bold hover:bg-blue-600"
+                    to="/all-bookings"
+                  >
+                    All Bookings
+                  </Link>
+                </>
+              )}
               <SignOutButton />
             </>
           ) : (

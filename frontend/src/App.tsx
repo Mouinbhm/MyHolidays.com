@@ -17,6 +17,7 @@ import Booking from "./pages/Booking";
 import MyBookings from "./pages/MyBookings";
 import Home from "./pages/Home";
 import Invoice from "./pages/Invoice";
+import AllBookings from "./pages/AllBookings";
 
 const App = () => {
   const { isLoggedIn } = useAppContext();
@@ -105,6 +106,14 @@ const App = () => {
               element={
                 <Layout>
                   <MyBookings />
+                </Layout>
+              }
+            />
+            <Route
+              path="/all-bookings"
+              element={
+                <Layout>
+                  <AllBookings />
                 </Layout>
               }
             />
