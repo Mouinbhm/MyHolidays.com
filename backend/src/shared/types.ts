@@ -22,7 +22,6 @@ export type HotelType = {
   starRating: number;
   imageUrls: string[];
   lastUpdated: Date;
-  bookings: BookingType[];
 };
 
 export type BookingType = {
@@ -37,7 +36,13 @@ export type BookingType = {
   checkIn: Date;
   checkOut: Date;
   totalCost: number;
+<<<<<<< HEAD
   paymentIntentId: string;
+=======
+  hotelName: string;
+  hotelCity: string;
+  hotelCountry: string;
+>>>>>>> ccabdffba99e2771232ab24ecbf27d601792f0b2
   createdAt: Date;
 };
 

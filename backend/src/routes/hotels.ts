@@ -152,17 +152,36 @@ router.post(
         });
       }
 
+<<<<<<< HEAD
       const newBooking = new Booking({
         ...req.body,
         userId: req.userId,
         hotelId: req.params.hotelId,
         paymentIntentId: paymentIntentId,
+=======
+      const hotel = await Hotel.findById(req.params.hotelId);
+      if (!hotel) {
+        return res.status(400).json({ message: "hotel not found" });
+      }
+
+      const newBooking = new Booking({
+        ...req.body,
+        userId: req.userId,
+        hotelId: hotel._id,
+        hotelName: hotel.name,
+        hotelCity: hotel.city,
+        hotelCountry: hotel.country
+>>>>>>> ccabdffba99e2771232ab24ecbf27d601792f0b2
       });
 
       await newBooking.save();
 
+<<<<<<< HEAD
       // Ne plus enregistrer dans la table hotel
       res.status(200).json({ bookingId: newBooking._id });
+=======
+      res.status(200).json(newBooking);
+>>>>>>> ccabdffba99e2771232ab24ecbf27d601792f0b2
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "something went wrong" });

@@ -1,0 +1,1 @@
+export const CLOUDINARY_URL = 'https://your-cloudinary-url.com'; 

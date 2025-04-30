@@ -1,11 +1,12 @@
 import express, { Request, Response } from "express";
 import multer from "multer";
-import cloudinary from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 import Hotel from "../models/hotel";
 import verifyToken from "../middleware/auth";
 import { body } from "express-validator";
 import { HotelType } from "../shared/types";
 import verifyRole from "../middleware/role";
+import sharp from 'sharp';
 
 const router = express.Router();
 
@@ -118,16 +119,38 @@ router.put(
   }
 );
 
-async function uploadImages(imageFiles: Express.Multer.File[]) {
+const optimizeImage = async (buffer: Buffer) => {
+  try {
+    return await sharp(buffer)
+      .resize(800, 600, {
+        fit: 'inside',
+        withoutEnlargement: true
+      })
+      .jpeg({ quality: 80 })
+      .toBuffer();
+  } catch (error) {
+    console.error('Image optimization error:', error);
+    return buffer;
+  }
+};
+
+const uploadImages = async (imageFiles: Express.Multer.File[]) => {
   const uploadPromises = imageFiles.map(async (image) => {
-    const b64 = image.buffer.toString("base64");
-    let dataURI = "data:" + image.mimetype + ";base64," + b64;
-    const res = await cloudinary.v2.uploader.upload(dataURI);
-    return res.url;
+    try {
+      const optimizedImageBuffer = await optimizeImage(image.buffer);
+      const b64 = Buffer.from(optimizedImageBuffer).toString("base64");
+      const dataURI = "data:" + image.mimetype + ";base64," + b64;
+      const result = await cloudinary.uploader.upload(dataURI, {
+        resource_type: "auto",
+      });
+      return result.url;
+    } catch (error) {
+      console.error('Upload error:', error);
+      throw error;
+    }
   });
 
-  const imageUrls = await Promise.all(uploadPromises);
-  return imageUrls;
-}
+  return Promise.all(uploadPromises);
+};
 
 export default router;

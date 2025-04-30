@@ -32,16 +32,28 @@ const Header = () => {
                 <>
                   <Link
                     className="flex items-center text-white px-3 font-bold hover:bg-blue-600"
+<<<<<<< HEAD
+=======
+                    to="/admin/bookings"
+                  >
+                    All Bookings
+                  </Link>
+                  <Link
+                    className="flex items-center text-white px-3 font-bold hover:bg-blue-600"
+>>>>>>> ccabdffba99e2771232ab24ecbf27d601792f0b2
                     to="/my-hotels"
                   >
                     My Hotels
                   </Link>
+<<<<<<< HEAD
                   <Link
                     className="flex items-center text-white px-3 font-bold hover:bg-blue-600"
                     to="/all-bookings"
                   >
                     All Bookings
                   </Link>
+=======
+>>>>>>> ccabdffba99e2771232ab24ecbf27d601792f0b2
                 </>
               )}
               <SignOutButton />

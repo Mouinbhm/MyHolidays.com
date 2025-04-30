@@ -13,6 +13,7 @@ import bookingRoutes from "./routes/my-bookings";
 import allBookingsRoutes from "./routes/all-bookings";
 import bookingsRoutes from "./routes/bookings";
 
+// Configuration de Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
